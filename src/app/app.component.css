@@ -1,0 +1,30 @@
+:root {
+  --checkbox-border-color: #6251dd;
+}
+
+input[type="checkbox"] {
+  border-color: var(--checkbox-border-color);
+}
+input[type="checkbox"]:checked {
+  border-color: var(--checkbox-border-color);
+}
+
+input[type="email"] {
+  font-family: Verdana;
+  letter-spacing: 0.1;
+}
+
+input[type="password"] {
+  font-family: Verdana;
+  letter-spacing: 0.125em;
+}
+
+#email {
+  background-color: #f4f4ff;
+  opacity: 0.7;
+}
+
+#password {
+  background-color: #f4f4ff;
+  opacity: 0.7;
+}
