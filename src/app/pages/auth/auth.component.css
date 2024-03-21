@@ -60,3 +60,17 @@ input[type='password'] {
   border-width: 2px;
   border-color: #f44336; /* Kırmızı renk kodu */
 }
+
+.form-control.ng-touched.ng-invalid {
+  border: 2px solid red;
+}
+.form-select.ng-touched.ng-invalid {
+  border: 2px solid red;
+}
+/* .form-control.ng-dirty.ng-valid {
+  border: 2px solid #319831;
+} */
+
+/* .form-select.ng-dirty.ng-valid {
+  border: 2px solid #319831;
+} */

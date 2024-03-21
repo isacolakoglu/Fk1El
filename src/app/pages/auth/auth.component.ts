@@ -1,15 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  FormsModule,
-  ReactiveFormsModule,
-  FormControl,
-  FormControlName,
-  FormGroupName,
-  AbstractControl,
-} from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, FormControlName, FormGroupName, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CustomValidationService } from '../../services/customValidation/custom-validation.service';
@@ -26,11 +16,9 @@ export class AuthComponent implements OnInit {
   loginForm: FormGroup | any;
   registerForm: FormGroup | any;
   submitted: boolean = false;
-
-  // emailFormControl: any;
   rememberMeChecked: boolean = false;
 
-  constructor(public formBuilder: FormBuilder, private customValidationService: CustomValidationService) {}
+  constructor(public formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.loginFormClass();
@@ -39,11 +27,16 @@ export class AuthComponent implements OnInit {
   loginFormClass() {
     this.loginForm = this.formBuilder.group({
       personalInfo: this.formBuilder.group({
-        emailLogin: ['', Validators.required],
-        passwordLogin: ['', Validators.required],
+        emailLogin: new FormControl(null, [Validators.required, Validators.email]),
+        passwordLogin: new FormControl(null, [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(20),
+          Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,20}$/),
+        ]),
       }),
       checkRemember: this.formBuilder.group({
-        rememberme: [false, Validators.nullValidator],
+        rememberme: new FormControl(false, [Validators.nullValidator]),
       }),
     });
 
@@ -51,71 +44,57 @@ export class AuthComponent implements OnInit {
       this.rememberMeChecked = value;
     });
   }
-
-  onLogin() {
-    this.submitted = true;
-    const emailControl = this.loginForm.get('personalInfo.emailLogin');
-    const passwordControl = this.loginForm.get('personalInfo.passwordLogin');
-
-    if (this.loginForm.invalid) {
-      if (emailControl.value === '' && passwordControl.value === '') {
-        console.log('Email ve şifre alanları zorunludur.');
-        return;
-      }
-
-      if (emailControl.value === '') {
-        console.log('Email alanı zorunludur.');
-        return;
-      }
-
-      if (passwordControl.value === '') {
-        console.log('Şifre alanı zorunludur.');
-        return;
-      }
-    } else {
-      console.log('Başarıyla giriş yapıldı');
-      console.table(this.loginForm.value);
-    }
-  }
-
   registerFormClass() {
     this.registerForm = this.formBuilder.group({
       personalInfo: this.formBuilder.group({
-        nameRegister: ['', Validators.required],
-        emailRegister: ['', Validators.required],
-        passwordRegister: ['', Validators.required],
+        nameRegister: new FormControl(null, [Validators.required, Validators.maxLength(10)]),
+        emailRegister: new FormControl(null, [Validators.required, Validators.email]),
+        passwordRegister: new FormControl(null, [Validators.required, Validators.minLength(6), Validators.maxLength(20), Validators.pattern('[a-zA-Z0-9]+')]),
       }),
     });
+  }
+  markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach((control) => {
+      if (control instanceof FormControl) {
+        control.markAsTouched();
+      } else if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
+  }
+  onLogin() {
+    this.submitted = true;
+    this.markFormGroupTouched(this.loginForm);
+    if (this.loginForm.invalid) {
+      console.log('Form validation failed!');
+      return;
+    } else {
+      alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.loginForm.value, null, 4));
+    }
+    console.log('Email kontrol', this.loginForm.get('personalInfo.emailLogin'));
+    console.log('Password kontrol', this.loginForm.get('personalInfo.passwordLogin'));
+    console.log('Form kontrol', this.loginForm);
   }
 
   onRegister() {
     this.submitted = true;
-    
-    const nameControl = this.registerForm.get('personalInfo.nameRegister');
-    const emailControl = this.registerForm.get('personalInfo.emailRegister');
-    const passwordControl = this.registerForm.get('personalInfo.passwordRegister');
-
+    // this.loginForm.markAllAsTouched(); // clear
+    this.markFormGroupTouched(this.registerForm);
     if (this.registerForm.invalid) {
-      if (nameControl.value === '') {
-        console.log('İsim alanı zorunludur.');
-        return;
-      }
-      if (emailControl.value === '') {
-        console.log('Email alanı zorunludur.');
-        return;
-      }
-      if (passwordControl.value === '') {
-        console.log('Şifre alanı zorunludur.');
-        return;
-      }
+      console.log('Register Form Validation Failed');
+      return;
+    } else {
+      alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.registerForm.value, null, 4));
     }
 
-    if (this.registerForm.valid) {
-      alert('Kaydedildi.');
-      console.table(this.registerForm.value);
-      return;
-    }
+    console.log('Ad kontrol', this.registerForm.get('personalInfo.nameRegister'));
+    console.log('Email kontrol', this.registerForm.get('personalInfo.emailRegister'));
+    console.log('Şifre kontrol', this.registerForm.get('personalInfo.passwordRegister'));
     console.table(this.registerForm.value);
+  }
+
+  switchTemplate() {
+    this.toggleMode();
   }
 
   toggleMode() {

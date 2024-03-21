@@ -32,18 +32,19 @@
                   type="email"
                   autocomplete="email"
                   placeholder="john@mail.com"
-                  [ngClass]="{
-                    'border-red-500': loginForm.get('personalInfo.emailLogin').invalid && submitted
-                  }"
                   class="form-control pl-2 block w-full rounded-md py-1.5 text-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   required
                 />
-                <!--  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  Email input için-->
                 <div
-                  *ngIf="loginForm.get('personalInfo.emailLogin').invalid && submitted"
+                  *ngIf="
+                    loginForm.get('personalInfo.emailLogin').invalid &&
+                    submitted &&
+                    (loginForm.get('personalInfo.emailLogin').dirty || loginForm.get('personalInfo.emailLogin').touched)
+                  "
                   class="block text-sm font-medium leading-6 text-red-500"
                 >
-                  Email alanı zorunludur.
+                  <div *ngIf="loginForm.get('personalInfo.emailLogin').errors?.required">Email boş bırakılmaz.</div>
+                  <div *ngIf="loginForm.get('personalInfo.emailLogin').errors?.email">Email doğru formatında olmalıdır.</div>
                 </div>
               </div>
             </div>
@@ -58,18 +59,21 @@
                   type="password"
                   autocomplete="current-password"
                   placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
-                  [ngClass]="{
-                    'border-red-500': loginForm.get('personalInfo.emailLogin').invalid && submitted
-                  }"
                   required
                   class="form-control pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                 />
-
                 <div
-                  *ngIf="loginForm.get('personalInfo.passwordLogin').invalid && submitted"
+                  *ngIf="
+                    loginForm.get('personalInfo.passwordLogin').invalid &&
+                    submitted &&
+                    (loginForm.get('personalInfo.passwordLogin').dirty || loginForm.get('personalInfo.passwordLogin').touched)
+                  "
                   class="block text-sm font-medium leading-6 text-red-500"
                 >
-                  Şifre alanı zorunludur.
+                  <div *ngIf="loginForm.get('personalInfo.passwordLogin').errors?.required">Şifre boş bırakılmaz.</div>
+                  <div *ngIf="loginForm.get('personalInfo.passwordLogin').errors?.minlength">En az 6 karakterdir.</div>
+                  <div *ngIf="loginForm.get('personalInfo.passwordLogin').errors?.maxlength">En fazla 20 karakterdir.</div>
+                  <div *ngIf="loginForm.get('personalInfo.passwordLogin').errors?.pattern">En az 1 karakter ve 1 harften oluşmalıdır.</div>
                 </div>
               </div>
             </div>
@@ -90,11 +94,14 @@
             <div>
               <button type="button" id="registerButton" (click)="toggleMode()" class="passive-button">Register</button>
             </div>
+
+            <!-- <p>Login Form value: {{ this.loginForm.values | json }}</p>
+            <p>Login Form status: {{ this.loginForm.status | json }}</p> -->
           </form>
         </div>
 
         <ng-template #registerMode>
-          <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <div *ngIf="!isLoginMode" class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="space-y-6" action="#" method="POST">
               <div formGroupName="personalInfo">
                 <label for="nameRegister" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
@@ -104,17 +111,19 @@
                     placeholder="John Doe"
                     id="nameRegister"
                     type="text"
-                    [ngClass]="{
-                      'border-red-500': registerForm.get('personalInfo.nameRegister').invalid && submitted
-                    }"
                     required
                     class="form-control pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   <div
-                    *ngIf="registerForm.get('personalInfo.nameRegister').invalid && submitted"
+                    *ngIf="
+                      registerForm.get('personalInfo.nameRegister').invalid &&
+                      submitted &&
+                      (registerForm.get('personalInfo.nameRegister').dirty || registerForm.get('personalInfo.nameRegister').touched)
+                    "
                     class="block text-sm font-medium leading-6 text-red-500"
                   >
-                    İsim alanı zorunludur.
+                    <div *ngIf="registerForm.get('personalInfo.nameRegister').errors?.required">Ad boş bırakılamaz.</div>
+                    <div *ngIf="registerForm.get('personalInfo.nameRegister').errors?.maxlength">En fazla 10 karakter olabilir.</div>
                   </div>
                 </div>
               </div>
@@ -127,18 +136,20 @@
                     placeholder="john@mail.com"
                     id="emailRegister"
                     type="email"
-                    [ngClass]="{
-                      'border-red-500': registerForm.get('personalInfo.emailRegister').invalid && submitted
-                    }"
                     autocomplete="email"
                     required
                     class="form-control pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   <div
-                    *ngIf="registerForm.get('personalInfo.emailRegister').invalid && submitted"
+                    *ngIf="
+                      registerForm.get('personalInfo.emailRegister').invalid &&
+                      submitted &&
+                      (registerForm.get('personalInfo.emailRegister').dirty || registerForm.get('personalInfo.emailRegister').touched)
+                    "
                     class="block text-sm font-medium leading-6 text-red-500"
                   >
-                    Email alanı zorunludur.
+                    <div *ngIf="registerForm.get('personalInfo.emailRegister').errors?.required">Email boş bırakılamaz.</div>
+                    <div *ngIf="registerForm.get('personalInfo.emailRegister').errors?.email">Email düzgün formatında olmalıdır.</div>
                   </div>
                 </div>
               </div>
@@ -150,40 +161,36 @@
                     formControlName="passwordRegister"
                     id="passwordRegister"
                     type="password"
-                    [ngClass]="{
-                      'border-red-500': registerForm.get('personalInfo.passwordRegister').invalid && submitted
-                    }"
                     placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
                     autocomplete="current-password"
                     required
                     class="form-control pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   <div
-                    *ngIf="registerForm.get('personalInfo.emailRegister').invalid && submitted"
+                    *ngIf="
+                      registerForm.get('personalInfo.passwordRegister').invalid &&
+                      submitted &&
+                      (registerForm.get('personalInfo.passwordRegister').dirty || registerForm.get('personalInfo.passwordRegister').touched)
+                    "
                     class="block text-sm font-medium leading-6 text-red-500"
                   >
-                    Şifre alanı zorunludur.
+                    <div *ngIf="registerForm.get('personalInfo.passwordRegister').errors?.required">Boş bırakılamaz.</div>
+                    <div *ngIf="registerForm.get('personalInfo.passwordRegister').errors?.minlength">En az 6 karakterli olmalıdır.</div>
+                    <div *ngIf="registerForm.get('personalInfo.passwordRegister').errors?.maxlength">En fazla 20 karakterli olmalıdır.</div>
+                    <div *ngIf="registerForm.get('personalInfo.passwordRegister').errors?.pattern">En az 1 karakter ve 1 harften oluşmalıdır.</div>
                   </div>
                 </div>
               </div>
 
               <div>
-                <button name="submitButton" id="registerButton" type="submit" [ngClass]="switchButtonClass()">
-                  Register
-                </button>
+                <button name="submitButton" id="registerButton" type="submit" [ngClass]="switchButtonClass()">Register</button>
               </div>
 
               <div>
-                <button
-                  name="normalButton"
-                  id="loginButton"
-                  (click)="toggleMode()"
-                  type="button"
-                  class="passive-button"
-                >
-                  Login
-                </button>
+                <button name="normalButton" id="loginButton" (click)="toggleMode()" type="button" class="passive-button">Login</button>
               </div>
+              <p>Register Form value: {{ this.registerForm.values | json }}</p>
+              <p>Register status: {{ this.registerForm.status | json }}</p>
             </form>
           </div>
         </ng-template>
