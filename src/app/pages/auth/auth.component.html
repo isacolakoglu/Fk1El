@@ -6,204 +6,169 @@
     <div class="grid h-screen grid-cols-2">
       <!-- First column -->
       <div class="bg-red-500 h-full w-full overflow-hidden">
-        <img
-          class="object-cover h-full w-full"
-          src="../assets/loginPicture.png"
-        />
+        <img class="object-cover h-full w-full" src="../assets/loginPicture.png" />
       </div>
       <!-- First column -->
 
       <!-- Second column -->
       <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            class="mx-auto h-10 w-auto"
-            src="../assets/logo.png"
-            alt="Your Company"
-          />
+          <img class="mx-auto h-10 w-auto" src="../assets/logo.png" alt="Your Company" />
           <div class="mt-12 mb-4">
-            <h4
-              class="font-bold leading-8 text-[#090937] opacity-60"
-              style="font-size: 24px"
-            >
-              Welcome back!
-            </h4>
-            <h2
-              class="font-bold leading-8 text-[#090937]"
-              style="font-size: 32px"
-            >
-              Login to your account
-            </h2>
+            <h4 class="font-bold leading-8 text-[#090937] opacity-60" style="font-size: 24px">Welcome back!</h4>
+            <h2 class="font-bold leading-8 text-[#090937]" style="font-size: 32px">Login to your account</h2>
           </div>
         </div>
 
-        <div
-          *ngIf="isLoginMode; else registerMode"
-          class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm"
-        >
-          <form
-            #form="ngForm"
-            (ngSubmit)="handleAuth(form)"
-            class="space-y-6"
-            action="#"
-            method="POST"
-          >
-            <div>
-              <label
-                for="email"
-                name="email"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >E-mail</label
-              >
+        <div *ngIf="isLoginMode; else registerMode" class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-6">
+            <div formGroupName="personalInfo">
+              <label for="emailLogin" class="block text-sm font-medium leading-6 text-gray-900">E-mail</label>
               <div class="mt-2">
                 <input
-                  placeholder="john@mail.com"
-                  id="email"
-                  ngModel
+                  formControlName="emailLogin"
+                  id="emailLogin"
                   name="email"
                   type="email"
                   autocomplete="email"
+                  placeholder="john@mail.com"
+                  [ngClass]="{
+                    'border-red-500': loginForm.get('personalInfo.emailLogin').invalid && submitted
+                  }"
+                  class="form-control pl-2 block w-full rounded-md py-1.5 text-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                   required
-                  class="pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
+                <!--  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  Email input için-->
+                <div
+                  *ngIf="loginForm.get('personalInfo.emailLogin').invalid && submitted"
+                  class="block text-sm font-medium leading-6 text-red-500"
+                >
+                  Email alanı zorunludur.
+                </div>
               </div>
             </div>
 
-            <div>
-              <div class="flex items-center justify-between">
-                <label
-                  for="password"
-                  class="block text-sm font-medium leading-6 text-gray-900"
-                  >Password</label
-                >
-              </div>
+            <div formGroupName="personalInfo">
+              <label for="passwordLogin" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
               <div class="mt-2">
                 <input
-                  id="password"
-                  ngModel
+                  formControlName="passwordLogin"
+                  id="passwordLogin"
                   name="password"
                   type="password"
-                  placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
                   autocomplete="current-password"
+                  placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
+                  [ngClass]="{
+                    'border-red-500': loginForm.get('personalInfo.emailLogin').invalid && submitted
+                  }"
                   required
-                  class="pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  class="form-control pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                 />
-              </div>
-              <!-- Remember me -->
-              <div>
-                <input
-                  type="checkbox"
-                  id="myCheckbox"
-                  class="remember mr-1 mt-4 accent-[#6251DD] focus:accent-[#6251DD] checked:ring-accent-[#6251DD] focus:ring-0"
-                />
-                <label for="myCheckbox" class="text-[#6251DD]"
-                  >Remember Me
-                </label>
+
+                <div
+                  *ngIf="loginForm.get('personalInfo.passwordLogin').invalid && submitted"
+                  class="block text-sm font-medium leading-6 text-red-500"
+                >
+                  Şifre alanı zorunludur.
+                </div>
               </div>
             </div>
 
+            <div formGroupName="checkRemember">
+              <input
+                formControlName="rememberme"
+                type="checkbox"
+                id="rememberme"
+                class="form-control remember mr-1 accent-[#6251DD] focus:accent-[#6251DD] checked:ring-accent-[#6251DD] focus:ring-0"
+              />
+              <label for="rememberme" class="text-[#6251DD]">Remember Me</label>
+            </div>
+
             <div>
-              <button
-                name="submitButton"
-                type="submit"
-                id="loginButton"
-                [ngClass]="switchButtonClass()"
-              >
-                Log in
-              </button>
+              <button name="submitButton" [ngClass]="switchButtonClass()" type="submit" id="loginButton">Log in</button>
             </div>
             <div>
-              <button
-                name="normalButton"
-                id="registerButton"
-                (click)="toggleMode()"
-                type="button"
-                class="passive-button"
-              >
-                Register
-              </button>
+              <button type="button" id="registerButton" (click)="toggleMode()" class="passive-button">Register</button>
             </div>
           </form>
         </div>
 
         <ng-template #registerMode>
           <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form
-              #form="ngForm"
-              (ngSubmit)="handleAuth(form)"
-              class="space-y-6"
-              action="#"
-              method="POST"
-            >
-              <div>
-                <label
-                  for="name"
-                  class="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Name
-                </label>
+            <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="space-y-6" action="#" method="POST">
+              <div formGroupName="personalInfo">
+                <label for="nameRegister" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
                 <div class="mt-2">
                   <input
+                    formControlName="nameRegister"
                     placeholder="John Doe"
-                    id="name"
-                    ngModel
-                    name="name"
+                    id="nameRegister"
                     type="text"
+                    [ngClass]="{
+                      'border-red-500': registerForm.get('personalInfo.nameRegister').invalid && submitted
+                    }"
                     required
-                    class="pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    class="form-control pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                  <div
+                    *ngIf="registerForm.get('personalInfo.nameRegister').invalid && submitted"
+                    class="block text-sm font-medium leading-6 text-red-500"
+                  >
+                    İsim alanı zorunludur.
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <label
-                  for="email"
-                  class="block text-sm font-medium leading-6 text-gray-900"
-                  >E-mail</label
-                >
+              <div formGroupName="personalInfo">
+                <label for="emailRegister" class="block text-sm font-medium leading-6 text-gray-900">E-mail</label>
                 <div class="mt-2">
                   <input
+                    formControlName="emailRegister"
                     placeholder="john@mail.com"
-                    id="email"
-                    ngModel
-                    name="email"
+                    id="emailRegister"
                     type="email"
+                    [ngClass]="{
+                      'border-red-500': registerForm.get('personalInfo.emailRegister').invalid && submitted
+                    }"
                     autocomplete="email"
                     required
-                    class="pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    class="form-control pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                  <div
+                    *ngIf="registerForm.get('personalInfo.emailRegister').invalid && submitted"
+                    class="block text-sm font-medium leading-6 text-red-500"
+                  >
+                    Email alanı zorunludur.
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <div class="flex items-center justify-between">
-                  <label
-                    for="password"
-                    class="block text-sm font-medium leading-6 text-gray-900"
-                    >Password</label
-                  >
-                </div>
+              <div formGroupName="personalInfo">
+                <label for="passwordRegister" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
                 <div class="mt-2">
                   <input
-                    id="password"
-                    ngModel
-                    name="password"
+                    formControlName="passwordRegister"
+                    id="passwordRegister"
                     type="password"
+                    [ngClass]="{
+                      'border-red-500': registerForm.get('personalInfo.passwordRegister').invalid && submitted
+                    }"
                     placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
                     autocomplete="current-password"
                     required
-                    class="pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    class="form-control pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                  <div
+                    *ngIf="registerForm.get('personalInfo.emailRegister').invalid && submitted"
+                    class="block text-sm font-medium leading-6 text-red-500"
+                  >
+                    Şifre alanı zorunludur.
+                  </div>
                 </div>
               </div>
 
               <div>
-                <button
-                  name="submitButton"
-                  id="registerButton"
-                  type="submit"
-                  [ngClass]="switchButtonClass()"
-                >
+                <button name="submitButton" id="registerButton" type="submit" [ngClass]="switchButtonClass()">
                   Register
                 </button>
               </div>

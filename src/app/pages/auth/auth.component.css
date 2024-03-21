@@ -2,38 +2,48 @@
   --checkbox-border-color: #6251dd;
 }
 
-input[type="checkbox"] {
+input[type='checkbox'] {
   border-color: var(--checkbox-border-color);
 }
-input[type="checkbox"]:checked {
+input[type='checkbox']:checked {
   border-color: var(--checkbox-border-color);
 }
-input[type="name"] {
+input[type='name'] {
   font-family: Verdana;
   letter-spacing: 0.1;
 }
 
-input[type="email"] {
+input[type='email'] {
   font-family: Verdana;
   letter-spacing: 0.1;
 }
 
-input[type="password"] {
+input[type='password'] {
   font-family: Verdana;
   letter-spacing: 0.125em;
 }
 
-#name {
+#nameRegister {
   background-color: #f4f4ff;
   opacity: 0.7;
 }
 
-#email {
+#emailLogin {
   background-color: #f4f4ff;
   opacity: 0.7;
 }
 
-#password {
+#emailRegister {
+  background-color: #f4f4ff;
+  opacity: 0.7;
+}
+
+#passwordLogin {
+  background-color: #f4f4ff;
+  opacity: 0.7;
+}
+
+#passwordRegister {
   background-color: #f4f4ff;
   opacity: 0.7;
 }
@@ -44,4 +54,9 @@ input[type="password"] {
 
 .passive-button {
   @apply flex w-full justify-center rounded-md bg-[#fffff] border border-[#6251DD] px-3 py-1.5 text-sm font-semibold leading-6 text-[#6251DD] hover:text-[#ffff] shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+}
+
+.border-red-500 {
+  border-width: 2px;
+  border-color: #f44336; /* Kırmızı renk kodu */
 }
