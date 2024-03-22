@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl, FormControlName, FormGroupName, AbstractControl } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { CustomValidationService } from '../../services/customValidation/custom-validation.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -12,17 +12,20 @@ import { CustomValidationService } from '../../services/customValidation/custom-
   styleUrl: './auth.component.css',
 })
 export class AuthComponent implements OnInit {
-  isLoginMode: boolean = true;
   loginForm: FormGroup | any;
   registerForm: FormGroup | any;
+  isLoginMode: boolean = true;
   submitted: boolean = false;
   rememberMeChecked: boolean = false;
+  errorMessage: string = '';
+  token: any;
 
-  constructor(public formBuilder: FormBuilder) {}
+  constructor(public formBuilder: FormBuilder, private authService: AuthService, private route: Router) {}
 
   ngOnInit() {
     this.loginFormClass();
     this.registerFormClass();
+    
   }
   loginFormClass() {
     this.loginForm = this.formBuilder.group({
@@ -53,6 +56,58 @@ export class AuthComponent implements OnInit {
       }),
     });
   }
+
+  onLogin() {
+    this.submitted = true;
+    this.markFormGroupTouched(this.loginForm);
+    const formData = this.loginForm.value;
+    const email = formData.personalInfo.emailLogin;
+    const password = formData.personalInfo.passwordLogin;
+    const rememberMe = formData.rememberMe;
+
+    if (this.loginForm.valid) {
+      this.authService.loginUser(email, password).subscribe(
+        (data: any) => {
+          if (this.rememberMeChecked) {
+            this.authService.storeToken(data);
+          } else {
+            this.token = data[0];
+            console.log('Sunucudan token gelmediği zaman', this.token);
+            localStorage.setItem('Authorization', this.token);
+          }
+          this.loginForm.reset();
+          this.route.navigate(['/']);
+        },
+        (error: any) => {
+          console.log('Giriş başarısız:', error);
+        },
+      );
+    }
+  }
+  onRegister() {
+    this.submitted = true;
+    this.markFormGroupTouched(this.registerForm);
+    const formData = this.registerForm.value;
+    const email = formData.personalInfo.emailRegister;
+    const name = formData.personalInfo.nameRegister;
+    const password = formData.personalInfo.passwordRegister;
+
+    if (this.registerForm.valid) {
+      this.authService.registerUser(email, name, password).subscribe({
+        next: (data: any) => {
+          console.log('Kayıt Başarılı', data[0]);
+          this.token = data[0];
+          localStorage.setItem('Authorization', this.token);
+          this.registerForm.reset();
+          this.route.navigate(['/']);
+        },
+        error: (error: any) => {
+          console.log('Kayıt Başarısız', error);
+        },
+      });
+    }
+  }
+
   markFormGroupTouched(formGroup: FormGroup) {
     Object.values(formGroup.controls).forEach((control) => {
       if (control instanceof FormControl) {
@@ -62,36 +117,6 @@ export class AuthComponent implements OnInit {
       }
     });
   }
-  onLogin() {
-    this.submitted = true;
-    this.markFormGroupTouched(this.loginForm);
-    if (this.loginForm.invalid) {
-      console.log('Form validation failed!');
-      return;
-    } else {
-      alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.loginForm.value, null, 4));
-    }
-    console.log('Email kontrol', this.loginForm.get('personalInfo.emailLogin'));
-    console.log('Password kontrol', this.loginForm.get('personalInfo.passwordLogin'));
-    console.log('Form kontrol', this.loginForm);
-  }
-
-  onRegister() {
-    this.submitted = true;
-    // this.loginForm.markAllAsTouched(); // clear
-    this.markFormGroupTouched(this.registerForm);
-    if (this.registerForm.invalid) {
-      console.log('Register Form Validation Failed');
-      return;
-    } else {
-      alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.registerForm.value, null, 4));
-    }
-
-    console.log('Ad kontrol', this.registerForm.get('personalInfo.nameRegister'));
-    console.log('Email kontrol', this.registerForm.get('personalInfo.emailRegister'));
-    console.log('Şifre kontrol', this.registerForm.get('personalInfo.passwordRegister'));
-    console.table(this.registerForm.value);
-  }
 
   switchTemplate() {
     this.toggleMode();
@@ -99,9 +124,13 @@ export class AuthComponent implements OnInit {
 
   toggleMode() {
     this.isLoginMode = !this.isLoginMode;
+    if (this.isLoginMode) {
+      this.loginForm.reset();
+    } else {
+      this.registerForm.reset();
+    }
   }
 
-  // Login ve Register tıklandığında butonların stil özellikleri değiştirildi.
   switchButtonClass() {
     let activeButtons;
     var elements = document.querySelectorAll('[name="submitButton"]');
@@ -111,179 +140,3 @@ export class AuthComponent implements OnInit {
     return activeButtons ? 'active-button' : 'passive-button';
   }
 }
-
-/**
- * My Method
- * * Important information is highlighted
- * ! Deprecated method, do not use
- * [class]="switchClassName()
- * // const loginButton = document.getElementById('loginButton');
-    // const registerButton = document.getElementById('registerButton');
-
-    // const element = this.elementRef.nativeElement as HTMLElement;
-    // this.renderer.addClass(element, 'active-button');
-
-    // if (this.isLoginMode) {
-    //   console.log('Login basıldı');
-    //   // loginButton?.classList.add('active-button');
-    //   // registerButton?.classList.remove('active-button');
-    //   console.log('loginButton', loginButton?.className);
-    //   console.log('registerButton', registerButton?.className);
-    // } else {
-    //   console.log('Register basıldı');
-    //   console.log('loginButton', loginButton?.className);
-    //   console.log('registerButton', registerButton?.className);
-    //   // loginButton?.classList.remove('active-button');
-    //   // registerButton?.classList.add('active-button');
-    // }
-
-        // return this.isLoginMode ? 'active-button' : 'passive-button';
-    // return {
-    //   'active-button': this.isLoginMode && buttonType === 'submit',
-    //   'passive-button': this.isLoginMode || buttonType !== 'submit',
-    // };
-
-    // registerForm = new FormGroup({
-  //   personalInfo: new FormGroup({
-  //     nameRegister: new FormControl(''),
-  //     emailRegister: new FormControl(''),
-  //     passwordRegister: new FormControl(''),
-  //   }),
-  // });
-
-  // loginForm = new FormGroup({
-  //   personalInfo: new FormGroup({
-  //     emailLogin: new FormControl(''),
-  //     passwordLogin: new FormControl(''),
-  //   }),
-  //   checkRemember: new FormGroup({
-  //     rememberme: new FormControl(''),
-  //   }),
-  // });
-
-// get name() {
-  //   return this.registerForm.get('name');
-  // }
-
-  // get emailRegister() {
-  //   return this.registerForm.get('email');
-  // }
-
-  // get passwordRegister() {
-  //   return this.registerForm.get('password');
-  // }
-
-  // get emailLogin() {
-  //   return this.loginForm.get('email');
-  // }
-
-  // get passwordLogin() {
-  //   return this.loginForm.get('password');
-  // }
-
-  // handleAuth(form: NgForm) {
-  //   if (!form.valid) {
-  //     return;
-  //   }
-  //   const name = form.value.name;
-  //   const email = form.value.email;
-  //   const password = form.value.password;
-
-  //   const checker = document.getElementById('myCheckbox');
-  //   console.log(checker);
-
-  //   if (this.isLoginMode) {
-  //     console.log('Login Mode', email, password);
-  //   } else {
-  //     console.log('Register Mode', name, email, password);
-  //   }
-  // }
-
-  
-          Validators.pattern('[a-zA-Z0-9]+'),
-          Validators.minLength(6),
-          Validators.maxLength(20),
-  
-  // registerFormGroup(){
-  //   return new FormGroup({
-  //     emailLogin: new FormControl(null, Validators.required, Validators.email),
-  //     passwordLogin: new FormControl(null, Validators.required, Validators.pattern('[a-zA-Z0-9]+'), Validators.minLength(6), Validators.maxLength(20)),
-  //   })
-  // }
-
-
-
-  // this.registerForm = this.fb.group({
-    //   personalInfo: this.fb.group({
-    //     nameRegister: ['', Validators.required],
-    //     emailRegister: ['', Validators.required],
-    //     passwordRegister: ['', Validators.required],
-    //   }),
-    // });
-    // this.loginForm = this.fb.group({
-    //   personalInfo: this.fb.group({
-    //     emailLogin: ['', Validators],
-    //     passwordLogin: ['', Validators.required],
-    //   }),
-    //   checkRemember: this.fb.group({
-    //     rememberme: ['', Validators.required],
-    //   }),
-    // });
-  
-
-    // loginForm: FormGroup | any;
-  // registerForm: FormGroup | any;
-
-  // get registerFormControl() {
-  //   return this.registerForm.controls;
-  // }
-
-
-
-  
-  // get emailControl() {
-  //   return this.loginForm.get('emailLogin');
-  // }
-
-  // get passwordControl() {
-  //   return this.loginForm.get('passwordLogin');
-  // }
-
-  // this.emailFormControl = this.loginForm.get('personalInfo').get('emailLogin');
-  // if (this.loginForm.valid) {
-  //   this.loginForm.reset();
-  // } else {
-  // }
-
-  // validationLogin() {
-  //   this.emailFormControl = this.loginForm.get('personalInfo').get('emailLogin');
-  //   console.log(this.emailFormControl);
-  //   if (this.emailFormControl.value === '') {
-  //     this.emailFormControl.setErrors({ required: true });
-  //   } else {
-  //     return;
-  //   }
-  // }
-
-  // this.loginForm.markAllAsTouched();
-
-  // if (emailControl?.errors?.required) {
-  //   console.log('Email Gerekli');
-  // }
-  // if (passwordControl?.errors?.required) {
-  //   console.log('Şifre gerekli');
-  // }
-
-  // get f(): { [key: string]: AbstractControl } {
-  //   console.log(this.loginForm.controls.personalInfo);
-  //   return this.loginForm.controls.personalInfo;
-  // }
-
-  // onReset(): void {
-  //   this.submitted = false;
-  //   this.loginForm.reset();
-  // }
-
-  // Login ve Register butonlarına basıldığında <ng-template> bulunduğu koşula göre kendini gösterir.
-  
- */

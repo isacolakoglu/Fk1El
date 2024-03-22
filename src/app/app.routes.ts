@@ -4,31 +4,21 @@ import { HomeComponent } from './pages/home/home.component';
 
 import { NgModule } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { AuthGuard } from './guards/auth/auth.guard';
 
 export const routes: Routes = [
   {
-    path: 'login',
+    path: 'auth',
     component: AuthComponent,
-  },
-  {
-    path: 'register',
-    component: AuthComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: '',
-    redirectTo: '/login',
-    pathMatch: 'full',
+    component: HomeComponent,
+    canActivate: [AuthGuard],
   },
   {
-    path: '**',
-    redirectTo: '/login',
+    path: '*',
+    redirectTo: '/',
   },
-  // {
-  //   path: '',
-  //   component: HomeComponent,
-  // },
-  // {
-  //   path: 'auth',
-  //   component: AuthComponent,
-  // },
 ];
