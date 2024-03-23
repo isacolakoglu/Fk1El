@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule, F
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth/auth.service';
+import { CustomError } from '../../core/errors/custom-error';
 
 @Component({
   selector: 'app-auth',
@@ -25,7 +26,6 @@ export class AuthComponent implements OnInit {
   ngOnInit() {
     this.loginFormClass();
     this.registerFormClass();
-    
   }
   loginFormClass() {
     this.loginForm = this.formBuilder.group({
@@ -39,7 +39,7 @@ export class AuthComponent implements OnInit {
         ]),
       }),
       checkRemember: this.formBuilder.group({
-        rememberme: new FormControl(false, [Validators.nullValidator]),
+        rememberme: new FormControl(null, [Validators.nullValidator]),
       }),
     });
 
@@ -57,33 +57,31 @@ export class AuthComponent implements OnInit {
     });
   }
 
+  /**
+   ** Yeni onLogin() ve onRegister() metotları oluşturuldu.
+   ** localhost:300/variable içinden key value id yi kullanarak bir hesap tokeni
+   ** oluşturarak işlem yapabileceğim.
+   */
   onLogin() {
     this.submitted = true;
     this.markFormGroupTouched(this.loginForm);
     const formData = this.loginForm.value;
     const email = formData.personalInfo.emailLogin;
     const password = formData.personalInfo.passwordLogin;
-    const rememberMe = formData.rememberMe;
-
+    const rememberme = formData.checkRemember.rememberme;
     if (this.loginForm.valid) {
-      this.authService.loginUser(email, password).subscribe(
-        (data: any) => {
-          if (this.rememberMeChecked) {
-            this.authService.storeToken(data);
-          } else {
-            this.token = data[0];
-            console.log('Sunucudan token gelmediği zaman', this.token);
-            localStorage.setItem('Authorization', this.token);
-          }
+      this.authService.loginUser(email, password, rememberme).subscribe({
+        next: () => {
           this.loginForm.reset();
           this.route.navigate(['/']);
         },
-        (error: any) => {
-          console.log('Giriş başarısız:', error);
+        error: (error: any) => {
+          this.errorMessage = error.error.message;
         },
-      );
+      });
     }
   }
+
   onRegister() {
     this.submitted = true;
     this.markFormGroupTouched(this.registerForm);
@@ -91,18 +89,16 @@ export class AuthComponent implements OnInit {
     const email = formData.personalInfo.emailRegister;
     const name = formData.personalInfo.nameRegister;
     const password = formData.personalInfo.passwordRegister;
-
     if (this.registerForm.valid) {
       this.authService.registerUser(email, name, password).subscribe({
-        next: (data: any) => {
-          console.log('Kayıt Başarılı', data[0]);
-          this.token = data[0];
-          localStorage.setItem('Authorization', this.token);
+        // Sunucudan gelen yanıt undefined'dır. Undefined olursa 3000/variable URL'deki
+        // tokeni kullanacam. Eğer sunucudan token yanıtı gelirse o hesabı kullanacağım.
+        next: (action_register: any) => {
           this.registerForm.reset();
           this.route.navigate(['/']);
         },
-        error: (error: any) => {
-          console.log('Kayıt Başarısız', error);
+        error: (error: CustomError) => {
+          console.log('Kayıt Başarısız.:', error.message);
         },
       });
     }
