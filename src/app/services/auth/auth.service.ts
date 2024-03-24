@@ -1,15 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, pipe, tap, throwError } from 'rxjs';
+import { Observable, catchError, map, pipe, tap, throwError } from 'rxjs';
 import { CustomError } from '../../core/errors/custom-error';
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
+import { of, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   isLoggedToken: any;
+  private isAuthenticated = false;
+  private authToken: string | null = null;
   private url = 'http://localhost:3000';
   private tokenUrl = 'http://localhost:3000/variable';
   private loginUrl = 'https://assign-api.piton.com.tr/api/rest/login';
@@ -17,7 +19,7 @@ export class AuthService {
 
   constructor(private http: HttpClient, private route: Router) {}
 
-  registerUser(email: any, name: any, password: any) {
+  registerUser(email: any, name: any, password: any): Observable<any> {
     return this.http.post(this.registerUrl, { email, name, password }).pipe(
       tap((action_register: any) => {
         if (action_register[0] !== undefined) {
@@ -41,9 +43,11 @@ export class AuthService {
     );
   }
 
-  loginUser(email: any, password: any, rememberme: boolean) {
+  loginUser(email: any, password: any, rememberme: boolean): Observable<any> {
     return this.http.post(this.loginUrl, { email, password }).pipe(
-      tap((action_login: any) => {
+      switchMap((action_login: any) => {
+        this.authToken = action_login;
+        console.log(this.authToken);
         if (action_login[0] !== undefined) {
           if (rememberme === true) {
             localStorage.setItem(`Authorization`, JSON.stringify(action_login[0]));
@@ -52,9 +56,11 @@ export class AuthService {
             sessionStorage.setItem(`Authorization`, JSON.stringify(action_login[0]));
             console.log('Üye olundu, Token Alındı. Sunucudan gelen token ile sessionStorage kullanılıyor...');
           }
-        } else if (action_login[0] === undefined) {
-          this.getToken().subscribe(
-            (tokenData) => {
+          this.route.navigate(['/']);
+          return of(action_login);
+        } else {
+          return this.getToken().pipe(
+            switchMap((tokenData: any) => {
               if (email === tokenData[0].email && password === tokenData[0].password) {
                 const { key, value, id } = tokenData[0];
                 if (rememberme === true) {
@@ -66,19 +72,61 @@ export class AuthService {
                   sessionStorage.setItem(`${key}`, JSON.stringify(tokenData[0].value));
                 }
                 this.route.navigate(['/']);
+                return of(action_login);
               } else {
-                console.log('Kullanıcı adı veya şifre yanlış!!');
+                return throwError('Kullanıcı adı veya şifre yanlış. Lütfen tekrar deneyiniz.');
               }
-            },
-            (error) => {
-              console.error('Token Alınamadı, Başarısız:', error);
-              return of(null);
-            },
+            }),
           );
         }
       }),
+      catchError((error) => {
+        // HTTP isteği hatası
+        // console.error('HTTP İsteği Başarısız:', error);
+        console.error('HTTP İsteği Başarısız. Lütfen tekrar deneyiniz.');
+        return throwError(error);
+      }),
     );
   }
+
+  // loginUser(email: any, password: any, rememberme: boolean): Observable<any> {
+  //   return this.http.post(this.loginUrl, { email, password }).pipe(
+  //     tap(
+  //       (action_login: any) => {
+  //         if (action_login[0] !== undefined) {
+  //           if (rememberme === true) {
+  //             localStorage.setItem(`Authorization`, JSON.stringify(action_login[0]));
+  //             console.log('Üye olundu, Token Alındı. Sunucudan gelen token ile localStorage kullanılıyor...');
+  //           } else {
+  //             sessionStorage.setItem(`Authorization`, JSON.stringify(action_login[0]));
+  //             console.log('Üye olundu, Token Alındı. Sunucudan gelen token ile sessionStorage kullanılıyor...');
+  //           }
+  //           this.route.navigate(['/']);
+  //         } else {
+  //           this.getToken().subscribe((tokenData) => {
+  //             if (email === tokenData[0].email && password === tokenData[0].password) {
+  //               const { key, value, id } = tokenData[0];
+  //               if (rememberme === true) {
+  //                 sessionStorage.removeItem(`${key}`);
+  //                 localStorage.setItem(`${key}`, JSON.stringify(tokenData[0].value));
+  //                 console.log("Üye olundu, Token alındı. JSON'dan gelen token ile kullanılıyor...", tokenData[0]);
+  //               } else {
+  //                 localStorage.removeItem(`${key}`);
+  //                 sessionStorage.setItem(`${key}`, JSON.stringify(tokenData[0].value));
+  //               }
+  //               this.route.navigate(['/']);
+  //             } else {
+  //               console.error('Kullanıcı adı veya şifre yanlış!!');
+  //             }
+  //           });
+  //         }
+  //       },
+  //       (error) => {
+  //         console.error('Sunucudan yanıt gelmemektedir. Lütfen daha sonra deneyiniz. ', error);
+  //       },
+  //     ),
+  //   );
+  // }
 
   checkLoginValidator(email: any, password: any) {
     return this.http.get(this.url + '/variable' + '?email=' + email + '&password=' + password).subscribe({
@@ -99,23 +147,22 @@ export class AuthService {
   }
 
   // http://localhost:3000/variable URL'den key, value ve id değerlerini alıp token oluşturuldu.
-
-  isLogged(): boolean {
-    this.getToken().subscribe((isLoggedToken) => {
-      const key = isLoggedToken[0].key;
-      let token = localStorage.getItem(`${key}`);
-      if (!token) {
-        token = sessionStorage.getItem(`${key}`);
-      }
-      if (token) {
-        this.isLoggedToken = token;
-        console.log('Token var:', token);
-      } else {
-        console.log('Token yok. Giriş yap!');
-      }
-    });
-    return !!this.isLoggedToken;
-  }
+  // isLogged(): boolean {
+  //   this.getToken().subscribe((isLoggedToken) => {
+  //     const key = isLoggedToken[0].key;
+  //     let token = localStorage.getItem(`${key}`);
+  //     if (!token) {
+  //       token = sessionStorage.getItem(`${key}`);
+  //     }
+  //     if (token) {
+  //       this.isLoggedToken = token;
+  //       console.log('Token var:', token);
+  //     } else {
+  //       console.log('Token yok. Giriş yap!');
+  //     }
+  //   });
+  //   return !!this.isLoggedToken;
+  // }
 
   logout(): void {
     this.getToken().subscribe((logoutToken) => {
@@ -155,4 +202,6 @@ export class AuthService {
     const error = new CustomError(errorMessage, statusCode);
     return throwError(error);
   }
+
+  
 }

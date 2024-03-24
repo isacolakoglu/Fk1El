@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth/auth.service';
 import { CustomError } from '../../core/errors/custom-error';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
@@ -15,11 +16,11 @@ import { CustomError } from '../../core/errors/custom-error';
 export class AuthComponent implements OnInit {
   loginForm: FormGroup | any;
   registerForm: FormGroup | any;
+  errorMessage: string = '';
+  token: any;
   isLoginMode: boolean = true;
   submitted: boolean = false;
   rememberMeChecked: boolean = false;
-  errorMessage: string = '';
-  token: any;
 
   constructor(public formBuilder: FormBuilder, private authService: AuthService, private route: Router) {}
 
@@ -57,11 +58,10 @@ export class AuthComponent implements OnInit {
     });
   }
 
-  /**
-   ** Yeni onLogin() ve onRegister() metotları oluşturuldu.
-   ** localhost:300/variable içinden key value id yi kullanarak bir hesap tokeni
-   ** oluşturarak işlem yapabileceğim.
-   */
+  closeAlert() {
+    this.errorMessage = '';
+  }
+
   onLogin() {
     this.submitted = true;
     this.markFormGroupTouched(this.loginForm);
@@ -70,12 +70,19 @@ export class AuthComponent implements OnInit {
     const password = formData.personalInfo.passwordLogin;
     const rememberme = formData.checkRemember.rememberme;
     if (this.loginForm.valid) {
-      this.authService.loginUser(email, password, rememberme).subscribe(
-        (data: any) => {},
-        (error) => {
-          this.loginForm.reset();
+      this.authService.loginUser(email, password, rememberme).subscribe({
+        next: (response: any) => {
+          console.log('response', response);
         },
-      );
+        error: (error: any) => {
+          console.log(error);
+          this.errorMessage = error;
+
+          setTimeout(() => {
+            this.errorMessage = '';
+          }, 3000);
+        },
+      });
     }
   }
 
@@ -94,7 +101,7 @@ export class AuthComponent implements OnInit {
           this.registerForm.reset();
           this.route.navigate(['/']);
         },
-        error: (error: CustomError) => {
+        error: (error) => {
           console.log('Kayıt Başarısız.:', error.message);
         },
       });
