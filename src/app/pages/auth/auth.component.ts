@@ -70,15 +70,12 @@ export class AuthComponent implements OnInit {
     const password = formData.personalInfo.passwordLogin;
     const rememberme = formData.checkRemember.rememberme;
     if (this.loginForm.valid) {
-      this.authService.loginUser(email, password, rememberme).subscribe({
-        next: () => {
+      this.authService.loginUser(email, password, rememberme).subscribe(
+        (data: any) => {},
+        (error) => {
           this.loginForm.reset();
-          this.route.navigate(['/']);
         },
-        error: (error: any) => {
-          this.errorMessage = error.error.message;
-        },
-      });
+      );
     }
   }
 
