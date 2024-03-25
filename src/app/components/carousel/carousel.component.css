@@ -1,0 +1,89 @@
+.slider {
+  position: relative;
+}
+
+.slider-item {
+  position: relative;
+  height: 400px;
+  display: flex;
+  align-items: center;
+}
+
+.slider-item .slider-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60%;
+  z-index: -1;
+}
+
+.slider-item .slider-title {
+  font-size: 56px;
+  font-weight: 1000;
+  font-family: 'Manrope', sans-serif;
+  color: #ffffff;
+}
+
+.slider-item .slider-heading {
+  font-size: 56px;
+  font-weight: 1000;
+  font-family: 'Manrope', sans-serif;
+  color: #f0b861;
+}
+
+.slider-item a {
+  position: relative;
+  z-index: 1;
+}
+
+.slider .slider-dots {
+  margin-top: 12px;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 12px;
+}
+
+.slider .slider-dots .slider-dot {
+  border: none;
+  display: flex;
+  opacity: 0.4;
+  transition: 0.2s ease opacity;
+}
+
+.slider .slider-dots .slider-dot:hover {
+  opacity: 1;
+}
+
+.slider .slider-dots .slider-dot span {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-color: #090937;
+  opacity: 0.6;
+  border-radius: 100%;
+}
+
+.slider .slider-dots .slider-dot.active {
+  background-color: #ef6b4a;
+  border-radius: 100%;
+  opacity: 1;
+}
+
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}

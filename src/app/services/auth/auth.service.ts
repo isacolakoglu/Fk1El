@@ -52,7 +52,10 @@ export class AuthService {
         if (this.authToken !== undefined) {
           const storage = rememberme ? localStorage : sessionStorage;
           storage.setItem('Authorization', JSON.stringify(this.authToken));
-          console.log('Giriş yapıldı, Token Alındı. Kullanılan Storage:', rememberme ? 'localStorage' : 'sessionStorage');
+          console.log(
+            'Giriş yapıldı, Token Alındı. Kullanılan Storage:',
+            rememberme ? 'localStorage' : 'sessionStorage',
+          );
           this.route.navigate(['/']);
           return of(this.authToken);
         } else {
@@ -62,7 +65,10 @@ export class AuthService {
                 const { key, value, id } = tokenData[0];
                 const storage = rememberme ? localStorage : sessionStorage;
                 storage.setItem(tokenData[0].key, JSON.stringify(tokenData[0].value));
-                console.log('Giriş yapıldı, JSON Token alındı. Kullanılan Storage:', rememberme ? 'localStorage' : 'sessionStorage');
+                console.log(
+                  'Giriş yapıldı, JSON Token alındı. Kullanılan Storage:',
+                  rememberme ? 'localStorage' : 'sessionStorage',
+                );
 
                 this.route.navigate(['/']);
                 return of(tokenData[0].value);
