@@ -8,12 +8,11 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 export const routes: Routes = [
   {
-    path: 'auth',
-    component: AuthComponent,
-  },
-  {
     path: '',
     component: HomeComponent,
-    // canActivate: [AuthGuard],
+  },
+  {
+    path: 'auth',
+    component: AuthComponent,
   },
 ];

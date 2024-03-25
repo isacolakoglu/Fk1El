@@ -72,7 +72,7 @@ export class AuthComponent implements OnInit {
     if (this.loginForm.valid) {
       this.authService.loginUser(email, password, rememberme).subscribe({
         next: (response: any) => {
-          console.log('response', response);
+          return response;
         },
         error: (error: any) => {
           console.log(error);

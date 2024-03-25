@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, filter } from 'rxjs';
 import { AuthService } from '../../services/auth/auth.service';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -12,15 +13,29 @@ import { AuthService } from '../../services/auth/auth.service';
 })
 export class HeaderComponent implements OnInit {
   isLoggedIn: boolean = false;
+  showHeader: boolean = true;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private route: Router) {}
 
   ngOnInit(): void {
-    // this.isLoggedIn = this.authService.isLogged();
+    this.authService.isLogged().subscribe((loggedIn: boolean) => {
+      this.isLoggedIn = loggedIn;
+    });
+
+    this.route.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
+      if (event.url.includes('/auth')) {
+        this.showHeader = false;
+      } else {
+        this.showHeader = true;
+      }
+    });
   }
 
   onLogout(): void {
     this.authService.logout();
     this.isLoggedIn = false;
+    this.route.navigate(['/auth']).then(() => {
+      window.location.reload();
+    });
   }
 }
