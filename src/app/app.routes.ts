@@ -1,10 +1,8 @@
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { AuthComponent } from './pages/auth/auth.component';
 import { HomeComponent } from './pages/home/home.component';
-
-import { NgModule } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-// import { AuthGuard } from './guards/auth/auth.guard';
+import { ProductsComponent } from './components/products/products/products.component';
+import { ProductsbycategoryComponent } from './components/products/productsbycategory/productsbycategory.component';
 
 export const routes: Routes = [
   {
@@ -14,5 +12,9 @@ export const routes: Routes = [
   {
     path: 'auth',
     component: AuthComponent,
+  },
+  {
+    path: 'category/:id',
+    component: ProductsbycategoryComponent,
   },
 ];

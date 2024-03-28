@@ -52,10 +52,7 @@ export class AuthService {
         if (this.authToken !== undefined) {
           const storage = rememberme ? localStorage : sessionStorage;
           storage.setItem('Authorization', JSON.stringify(this.authToken));
-          console.log(
-            'Giriş yapıldı, Token Alındı. Kullanılan Storage:',
-            rememberme ? 'localStorage' : 'sessionStorage',
-          );
+          console.log('Giriş yapıldı, Token Alındı. Kullanılan Storage:', rememberme ? 'localStorage' : 'sessionStorage');
           this.route.navigate(['/']);
           return of(this.authToken);
         } else {
@@ -65,10 +62,7 @@ export class AuthService {
                 const { key, value, id } = tokenData[0];
                 const storage = rememberme ? localStorage : sessionStorage;
                 storage.setItem(tokenData[0].key, JSON.stringify(tokenData[0].value));
-                console.log(
-                  'Giriş yapıldı, JSON Token alındı. Kullanılan Storage:',
-                  rememberme ? 'localStorage' : 'sessionStorage',
-                );
+                console.log('Giriş yapıldı, JSON Token alındı. Kullanılan Storage:', rememberme ? 'localStorage' : 'sessionStorage');
 
                 this.route.navigate(['/']);
                 return of(tokenData[0].value);
@@ -150,116 +144,3 @@ export class AuthService {
     return throwError(error);
   }
 }
-
-// http://localhost:3000/variable URL'den key, value ve id değerlerini alıp token oluşturuldu.
-// isLogged(): boolean {
-//   this.getToken().subscribe((isLoggedToken) => {
-//     const key = isLoggedToken[0].key;
-//     let token = localStorage.getItem(`${key}`);
-//     if (!token) {
-//       token = sessionStorage.getItem(`${key}`);
-//     }
-//     if (token) {
-//       this.isLoggedToken = token;
-//       console.log('Token var:', token);
-//     } else {
-//       console.log('Token yok. Giriş yap!');
-//     }
-//   });
-//   return !!this.isLoggedToken;
-// }
-
-// autoLogin(): void {
-//   this.getToken().pipe(
-//     tap((key) => {
-//       console.log(key);
-//       if (localStorage.getItem(`${key}`)) {
-//         this.authToken = localStorage.getItem(`${key}`);
-//         this.isAuthenticated = true;
-//         return;
-//       }
-
-//       const sessionStorageToken = sessionStorage.getItem(`${key}`);
-//       if (sessionStorageToken) {
-//         this.authToken = sessionStorageToken;
-//         this.isAuthenticated = true;
-//       }
-//     }),
-//   );
-// }
-
-// checkLoginValidator(email: any, password: any) {
-//   return this.http.get(this.url + '/variable' + '?email=' + email + '&password=' + password).subscribe({
-//     next: (data: any) => {
-//       if (data && data.length > 0 && data[0].name) {
-//         console.log(`Hoşgeldiniz ${data[0].name} JSON aracılığıyla girdiniz...`);
-//       } else {
-//         console.log('Kullanıcı adı veya şifre yanlış');
-//         localStorage.removeItem('Authorization');
-//         sessionStorage.removeItem('Authorization');
-//         this.route.navigate(['/']);
-//       }
-//     },
-//     error: (error: any) => {
-//       console.log('Sunucu hatası');
-//     },
-//   });
-// }
-
-// loginUser(email: any, password: any, rememberme: boolean): Observable<any> {
-//   return this.http.post(this.loginUrl, { email, password }).pipe(
-//     tap(
-//       (action_login: any) => {
-//         this.authToken = action_login[0];
-//         console.log(this.authToken);
-//         if (action_login[0] !== undefined) {
-//           if (rememberme === true) {
-//             localStorage.setItem(`Authorization`, JSON.stringify(action_login[0]));
-//             console.log('Üye olundu, Token Alındı. Sunucudan gelen token ile localStorage kullanılıyor...');
-//           } else {
-//             sessionStorage.setItem(`Authorization`, JSON.stringify(action_login[0]));
-//             console.log('Üye olundu, Token Alındı. Sunucudan gelen token ile sessionStorage kullanılıyor...');
-//           }
-//           this.route.navigate(['/']);
-//         } else {
-//           this.getToken().subscribe((tokenData) => {
-//             if (email === tokenData[0].email && password === tokenData[0].password) {
-//               const { key, value, id } = tokenData[0];
-//               if (rememberme === true) {
-//                 sessionStorage.removeItem(`${key}`);
-//                 localStorage.setItem(`${key}`, JSON.stringify(tokenData[0].value));
-//                 console.log("Üye olundu, Token alındı. JSON'dan gelen token ile kullanılıyor...", tokenData[0]);
-//               } else {
-//                 localStorage.removeItem(`${key}`);
-//                 sessionStorage.setItem(`${key}`, JSON.stringify(tokenData[0].value));
-//               }
-//               this.route.navigate(['/']);
-//             } else {
-//               console.error('Kullanıcı adı veya şifre yanlış!!');
-//             }
-//           });
-//         }
-//       },
-//       (error) => {
-//         console.error('Sunucudan yanıt gelmemektedir. Lütfen daha sonra deneyiniz. ', error);
-//       },
-//     ),
-//   );
-// }
-
-// if (rememberme === true) {
-//   localStorage.setItem(`Authorization`, JSON.stringify(action_login[0]));
-//   console.log('Üye olundu, Token Alındı. Sunucudan gelen token ile localStorage kullanılıyor...');
-// } else {
-//   sessionStorage.setItem(`Authorization`, JSON.stringify(action_login[0]));
-//   console.log('Üye olundu, Token Alındı. Sunucudan gelen token ile sessionStorage kullanılıyor...');
-// }
-
-// if (rememberme === true) {
-//   sessionStorage.removeItem(`${key}`);
-//   localStorage.setItem(`${key}`, JSON.stringify(tokenData[0].value));
-//   console.log("Üye olundu, Token alındı. JSON'dan gelen token ile kullanılıyor...", tokenData[0]);
-// } else {
-//   localStorage.removeItem(`${key}`);
-//   sessionStorage.setItem(`${key}`, JSON.stringify(tokenData[0].value));
-// }
