@@ -4,11 +4,12 @@ import { ProductsService } from '../../../services/products/products.service';
 import { CommonModule } from '@angular/common';
 import { flatMap, reduce, concat, pipe, tap, filter, merge, map } from 'rxjs';
 import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
+import { PriceformatPipe } from '../../../pipes/priceformat.pipe';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],
+  imports: [CommonModule, RouterOutlet, RouterLink, PriceformatPipe],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css',
 })

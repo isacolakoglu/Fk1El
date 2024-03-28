@@ -2,7 +2,7 @@
   <div *ngFor="let category of categories">
     <div class="flex justify-between mb-10">
       <h1 class="text-3xl font-bold">{{ category.name }}</h1>
-      <a [routerLink]="['/category', category.id]">View All</a>
+      <a [routerLink]="['/category', category.id]" class="text-[#EF6B4A] font-semibold text-lg">View All</a>
     </div>
     <div class="grid grid-cols-4 gap-5 mb-10">
       <div class="bg-[#F4F4FF] p-4 shadow-lg flex flex-col justify-between" *ngFor="let product of productsByCategory[category.name].slice(0, 4)">
@@ -16,7 +16,7 @@
               <p class="text-base font-semibold" style="color: gray">{{ product.author }}</p>
             </div>
             <div>
-              <h1 class="text-2xl font-semibold" style="color: #6251dd">{{ product.price }} $</h1>
+              <h1 class="text-2xl font-semibold" style="color: #6251dd">{{ product.price | priceformat }}</h1>
             </div>
           </div>
         </div>
