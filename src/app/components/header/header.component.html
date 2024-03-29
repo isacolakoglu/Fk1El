@@ -17,20 +17,30 @@
   </div>
 
   <!-- Sağ Grup -->
-  <div class="flex items-center space-x-4 mr-[60px]">
+  <div class="flex items-center space-x-4 mr-[60px] relative">
     <div
       *ngIf="isLoggedIn"
       class="relative w-[50px] h-[50px] bg-custom-gray flex justify-center items-center rounded-[5px] hover:shadow-xl hover:border-red-950 hover:rounded-xl transition duration-300"
+      (mouseenter)="showDropdown = true"
+      (mouseleave)="showDropdown = false"
     >
-      <a href="/auth">
+      <a (click)="onLogout()" class="hover:cursor-pointer justify-center items-center">
         <img src="../../../assets/user-icon.png" alt="user" class="w-[24px] h-[24px] object-contain" />
+        <div *ngIf="showDropdown" class="absolute top-[50px] right-1 w-[100px] h-auto bg-[#f4f4ff] border-gray-900 rounded-lg p-2">
+          <ng-container *ngIf="isLoggedIn; else notLoggedInContent">
+            <div class="font-bold">Cıkış Yap</div>
+          </ng-container>
+          <ng-template #notLoggedInContent>
+            <div class="font-bold">Üye Ol / Giriş Yap</div>
+          </ng-template>
+        </div>
       </a>
     </div>
     <div
       *ngIf="!isLoggedIn"
       class="relative w-[50px] h-[50px] bg-custom-gray flex justify-center items-center rounded-[5px] hover:shadow-xl hover:border-black hover:rounded-xl transition duration-300"
     >
-      <a (click)="onLogout()">
+      <a href="/auth" class="hover:cursor-pointer">
         <img src="../../../assets/user-icon.png" alt="user" class="w-[24px] h-[24px] object-contain" />
       </a>
     </div>

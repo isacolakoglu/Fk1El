@@ -14,12 +14,14 @@ import { NavigationEnd, Router } from '@angular/router';
 export class HeaderComponent implements OnInit {
   isLoggedIn: boolean = false;
   showHeader: boolean = true;
+  showDropdown = false;
 
   constructor(private authService: AuthService, private route: Router) {}
 
   ngOnInit(): void {
     this.authService.isLogged().subscribe((loggedIn: boolean) => {
       this.isLoggedIn = loggedIn;
+      console.log('User Kontrolü:', this.isLoggedIn);
     });
 
     this.route.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {

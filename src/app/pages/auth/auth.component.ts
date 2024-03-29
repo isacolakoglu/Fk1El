@@ -77,6 +77,9 @@ export class AuthComponent implements OnInit {
     if (this.loginForm.valid) {
       this.authService.loginUser(email, password, rememberme).subscribe({
         next: (response: any[]) => {
+          this.route.navigate(['/']).then(() => {
+            window.location.reload();
+          });
           return response;
         },
         error: (error: any) => {
@@ -104,7 +107,9 @@ export class AuthComponent implements OnInit {
         // tokeni kullanacam. Eğer sunucudan token yanıtı gelirse o hesabı kullanacağım.
         next: (action_register: any) => {
           this.registerForm.reset();
-          this.route.navigate(['/']);
+          this.route.navigate(['/']).then(() => {
+            window.location.reload();
+          });
         },
         error: (error) => {
           console.log('Kayıt Başarısız.:', error.message);
