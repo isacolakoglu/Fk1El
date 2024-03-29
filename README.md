@@ -1,6 +1,10 @@
 
 
-https://github.com/isacolakoglu/Fk1El/assets/85408010/286169e2-fe91-4042-ac53-0c3578ad40b1
+
+
+
+https://github.com/isacolakoglu/Fk1El/assets/85408010/16d85266-c1a3-4582-8a04-d0078a7de2b8
+
 
 
 ![Anasayfa](https://github.com/isacolakoglu/Fk1El/assets/85408010/19329c0e-a174-487b-a0fb-0a8881bcf4e6)
