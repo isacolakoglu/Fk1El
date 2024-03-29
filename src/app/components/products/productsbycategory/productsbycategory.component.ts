@@ -19,6 +19,7 @@ export class ProductsbycategoryComponent implements OnInit {
   categories: any[] = [];
   categoryName: string = '';
   products: any = [];
+  productId: any;
   constructor(private route: ActivatedRoute, private router: Router, private productsService: ProductsService) {}
 
   ngOnInit(): void {
@@ -42,7 +43,6 @@ export class ProductsbycategoryComponent implements OnInit {
             this.products.push(product);
           }
         });
-        console.log(this.products);
       });
     });
   }

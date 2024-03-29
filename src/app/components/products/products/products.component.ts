@@ -14,11 +14,13 @@ import { PriceformatPipe } from '../../../pipes/priceformat.pipe';
   styleUrl: './products.component.css',
 })
 export class ProductsComponent implements OnInit {
+[x: string]: any;
   imageData: any = []; // Resim URL'leri
   categories: any[] = [];
   productsByCategory: any = [];
   products: any = [];
   categoryId: any;
+  productId: any;
 
   constructor(private productsService: ProductsService, private route: ActivatedRoute) {}
 

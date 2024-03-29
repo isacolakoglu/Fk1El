@@ -1,1 +1,43 @@
-<p>categorydetails works!</p>
+<div class="productDetail-container w-[1380px] m-auto mt-5" *ngFor="let item of product">
+  <div class="navigateBack flex mb-5">
+    <a routerLink="/category/{{ categoryBack }}" class="flex items-center">
+      <img src="../../../../assets/Arrow.png" class="object-contain" />
+      <span class="font-semibold text-2xl ms-4">Book Details</span>
+    </a>
+  </div>
+  <div class="grid grid-cols-3">
+    <div class="product1-group col-span-1 rounded-sm p-11">
+      <div class="product-card flex justify-center text-center p-8 bg-[#F4F4FF]">
+        <img [src]="item.imageUrls" class="object-cover w-auto h-auto" />
+      </div>
+    </div>
+
+    <div class="col-span-2">
+      <div class="flex justify-between items-center mb-2">
+        <div class="mt-12 ms-2">
+          <h1 class="text-3xl font-bold mb-2">{{ item.name }}</h1>
+          <p class="text-2xl font-medium text-gray-500 mb-2">{{ item.author }}</p>
+        </div>
+        <div class="product-heart mt-5 relative w-[45px] h-[45px] bg-[#F4F4FF] flex justify-center items-center rounded-full">
+          <a (click)="like()" class="flex items-center hover:">
+            <img src="../../../../assets/product-heart-icon.png" class="object-contain" />
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-10 ms-2">
+        <h3 class="mb-2 text-xl font-bold">Summary</h3>
+        <p class="text-justify" style="color: #090937">{{ item.description }}</p>
+      </div>
+    </div>
+
+    <div class="col-span-3">
+      <div class="mt-4 flex justify-end">
+        <button class="bg-[#EF6B4A] text-white px-4 py-2 rounded-none w-[340px] justify-between items-center">
+          <span>{{ item.price | priceformat }}</span>
+          <span class="ml-48">Buy Now</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

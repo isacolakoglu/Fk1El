@@ -6,37 +6,20 @@
   </div>
   <div class="grid grid-cols-4 gap-6">
     <div *ngFor="let product of products" class="bg-[#F4F4FF] p-5 shadow-lg m-0">
-      <div class="justify-center text-center">
-        <img [src]="product.imageUrls" alt="Product" class="w-auto h-auto object-contain product-image" />
-      </div>
-      <div class="h-1/2 flex flex-row justify-between">
-        <div class="justify-start text-start">
-          <h3 class="text-md font-semibold">{{ product.name }}</h3>
-          <p class="text-md font-semibold" style="color: gray">{{ product.author }}</p>
+      <a [routerLink]="['products', product.id]">
+        <div class="justify-center text-center">
+          <img [src]="product.imageUrls" alt="Product" class="w-auto h-auto object-contain product-image" />
         </div>
-        <div class="justify-end text-end">
-          <p class="text-2xl font-semibold" style="color: #6251dd">{{ product.price | priceformat }}</p>
+        <div class="h-1/2 flex flex-row justify-between">
+          <div class="justify-start text-start">
+            <h3 class="text-md font-semibold">{{ product.name }}</h3>
+            <p class="text-md font-semibold" style="color: gray">{{ product.author }}</p>
+          </div>
+          <div class="justify-end text-end">
+            <p class="text-2xl font-semibold" style="color: #6251dd">{{ product.price | priceformat }}</p>
+          </div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 </div>
-
-<!-- <div class="flex flex-col mt-10">
-  <div *ngFor="let category of categories">
-    <div class="flex justify-between mb-10">
-      <h2 class="text-lg font-bold">{{ category.name }}</h2>
-      <a>View All</a>
-    </div>
-    <div class="grid grid-cols-4 gap-10 mb-10">
-      <div *ngFor="let product of productsByCategory[category.name].slice(0, 4)" class="bg-white p-4 shadow-md">
-        <img [src]="product.imageUrls" alt="Product Image" class="w-auto h-auto mb-2" />
-        <div>
-          <h3 class="text-base font-semibold mb-1">{{ product.name }}</h3>
-          <p class="text-sm text-gray-500 mb-1">{{ product.author }}</p>
-          <p class="text-sm font-semibold">${{ product.price }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
