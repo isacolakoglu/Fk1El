@@ -1,6 +1,6 @@
 <div class="productDetail-container w-[1380px] m-auto mt-5" *ngFor="let item of product">
   <div class="navigateBack flex mb-5">
-    <a routerLink="/category/{{ categoryBack }}" class="flex items-center">
+    <a [routerLink]="['/category', categoryBack]" class="flex items-center">
       <img src="../../../../assets/Arrow.png" class="object-contain" />
       <span class="font-semibold text-2xl ms-4">Book Details</span>
     </a>

@@ -18,10 +18,7 @@ export class CategorydetailsComponent implements OnInit {
   product: any = [];
   constructor(private route: ActivatedRoute, private router: Router, private productsService: ProductsService) {}
   ngOnInit(): void {
-    this.categoryBack = +this.route.snapshot.paramMap.get('id')!;
-    this.route.paramMap.subscribe((params) => {
-      this.productId = params.get('id');
-    });
+    this.productId = this.route.snapshot.paramMap.get('id');
     this.getProductId();
   }
 
@@ -31,6 +28,7 @@ export class CategorydetailsComponent implements OnInit {
       allProducts.forEach((product: any) => {
         if (Number(product.id) === Number(this.productId)) {
           this.product.push(product);
+          this.categoryBack = product.category_id;
         }
       });
       console.log(this.product);
