@@ -53,7 +53,12 @@ export class AuthComponent implements OnInit {
       personalInfo: this.formBuilder.group({
         nameRegister: new FormControl(null, [Validators.required, Validators.maxLength(10)]),
         emailRegister: new FormControl(null, [Validators.required, Validators.email]),
-        passwordRegister: new FormControl(null, [Validators.required, Validators.minLength(6), Validators.maxLength(20), Validators.pattern('[a-zA-Z0-9]+')]),
+        passwordRegister: new FormControl(null, [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(20),
+          Validators.pattern('[a-zA-Z0-9]+'),
+        ]),
       }),
     });
   }
@@ -71,12 +76,12 @@ export class AuthComponent implements OnInit {
     const rememberme = formData.checkRemember.rememberme;
     if (this.loginForm.valid) {
       this.authService.loginUser(email, password, rememberme).subscribe({
-        next: (response: any) => {
+        next: (response: any[]) => {
           return response;
         },
         error: (error: any) => {
-          console.log(error);
-          this.errorMessage = error;
+          const errorr = 'Böyle bir hesap yok YADA Kullanıcı adı veya şifre yanlış.';
+          this.errorMessage = errorr;
 
           setTimeout(() => {
             this.errorMessage = '';

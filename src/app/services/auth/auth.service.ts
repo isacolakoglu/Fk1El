@@ -23,23 +23,11 @@ export class AuthService {
   registerUser(email: any, name: any, password: any): Observable<any> {
     return this.http.post<User[]>(this.registerUrl, { email, name, password }).pipe(
       tap((action_register: any) => {
-        if (action_register[0] !== undefined) {
-          sessionStorage.setItem(`Authorization`, JSON.stringify(action_register[0]));
-          console.log('Üye olundu, Token Alındı. Sunucudan gelen token ile kullanılıyor...');
-        } else {
-          this.getToken().subscribe(
-            (tokenData) => {
-              console.log('Üye olundu, Token Alındı. Başarılı (/variable hesabı kullanılıyor...):', tokenData[0]);
-              const { key, value, id } = tokenData[0];
-              console.log(key, value, id);
-              sessionStorage.setItem(`${key}`, JSON.stringify(tokenData[0].value));
-              this.route.navigate(['/']);
-            },
-            (error) => {
-              console.error('Kayıt Hatası, Token Alınamadı. Başarısız:', error);
-            },
-          );
-        }
+        console.log(action_register.action_register.token);
+        const registerToken = action_register.action_register.token;
+        sessionStorage.setItem(`Authorization`, JSON.stringify(registerToken));
+        console.log('Üye olundu, Token Alındı. Sunucudan gelen token ile kullanılıyor...');
+        return registerToken;
       }),
     );
   }
@@ -47,30 +35,17 @@ export class AuthService {
   loginUser(email: any, password: any, rememberme: boolean): Observable<any> {
     return this.http.post<User[]>(this.loginUrl, { email, password }).pipe(
       switchMap((action_login: any) => {
-        this.authToken = action_login[0];
-        // console.log(this.authToken);  undefined (Sunucudan boş token geldiği zaman)
-        if (this.authToken !== undefined) {
+        console.log(action_login.action_login.token);
+        const loginToken = action_login.action_login.token;
+        if (loginToken) {
           const storage = rememberme ? localStorage : sessionStorage;
-          storage.setItem('Authorization', JSON.stringify(this.authToken));
+          storage.setItem('Authorization', JSON.stringify(loginToken));
           console.log('Giriş yapıldı, Token Alındı. Kullanılan Storage:', rememberme ? 'localStorage' : 'sessionStorage');
-          this.route.navigate(['/']);
-          return of(this.authToken);
-        } else {
-          return this.getToken().pipe(
-            switchMap((tokenData: any) => {
-              if (email === tokenData[0].email && password === tokenData[0].password) {
-                const { key, value, id } = tokenData[0];
-                const storage = rememberme ? localStorage : sessionStorage;
-                storage.setItem(tokenData[0].key, JSON.stringify(tokenData[0].value));
-                console.log('Giriş yapıldı, JSON Token alındı. Kullanılan Storage:', rememberme ? 'localStorage' : 'sessionStorage');
 
-                this.route.navigate(['/']);
-                return of(tokenData[0].value);
-              } else {
-                return throwError('Kullanıcı adı veya şifre yanlış. Lütfen tekrar deneyiniz.');
-              }
-            }),
-          );
+          this.route.navigate(['/']);
+          return loginToken;
+        } else {
+          console.error('Böyle bir hesap yok YADA Kullanıcı adı veya şifre yanlış.');
         }
       }),
       catchError((error) => {
